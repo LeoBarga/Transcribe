@@ -1,0 +1,533 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggerimenti - TranscribeTEST</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .nav-link {
+            color: #0a2472;
+        }
+        .nav-link:hover {
+            color: #0a2472;
+            text-decoration: underline;
+        }
+        .section-title, .new-suggestion-form h3 {
+            color: #0a2472;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .btn-primary {
+            background-color: #0a2472;
+            border-color: #0a2472;
+        }
+        .btn-primary:hover {
+            background-color: #081c5c;
+            border-color: #081c5c;
+        }
+        .btn-outline-primary {
+            color: #0a2472;
+            border-color: #0a2472;
+        }
+        .btn-outline-primary:hover {
+            background-color: #0a2472;
+            border-color: #0a2472;
+        }
+        .section-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .back-to-home {
+            margin-bottom: 2rem;
+        }
+        .nav-tabs .nav-link {
+            color: #0a2472;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0a2472;
+            font-weight: bold;
+            border-bottom: 2px solid #0a2472;
+        }
+        .suggestion-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+            background: white;
+        }
+        .suggestion-card:hover {
+            transform: translateY(-2px);
+        }
+        .suggestion-header {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .suggestion-body {
+            padding: 1rem;
+        }
+        .suggestion-footer {
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .status-non_visualizzato {
+            background-color: #adb5bd;
+            color: #fff;
+        }
+        .status-valutazione {
+            background-color: #f1c40f;
+            color: #fff;
+        }
+        .status-respinto {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+        .status-lavorazione {
+            background-color: #3498db;
+            color: #fff;
+        }
+        .status-attuato {
+            background-color: #2ecc71;
+            color: #fff;
+        }
+        .status-non_valido {
+            background-color: #6c757d;
+            color: #fff;
+        }
+        .new-suggestion-form {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    {% csrf_token %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">Transcribe</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'info' %}">Info</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Back to Home Button -->
+        <div class="back-to-home">
+            <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Torna alla Home
+            </a>
+        </div>
+        <h1 class="text-center mb-4">Suggerimenti</h1>
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs mb-4" id="suggestionTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="functions-tab" data-bs-toggle="tab" href="#functions" role="tab">
+                    <i class="fas fa-code me-1"></i>Nuove Funzioni
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="tools-tab" data-bs-toggle="tab" href="#tools" role="tab">
+                    <i class="fas fa-tools me-1"></i>Strumenti
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="style-tab" data-bs-toggle="tab" href="#style" role="tab">
+                    <i class="fas fa-paint-brush me-1"></i>Stile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="other-tab" data-bs-toggle="tab" href="#other" role="tab">
+                    <i class="fas fa-lightbulb me-1"></i>Altri
+                </a>
+            </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content" id="suggestionTabsContent">
+            <!-- Nuove Funzioni Tab -->
+            <div class="tab-pane fade show active" id="functions" role="tabpanel">
+                <div class="new-suggestion-form">
+                    <h3 class="mb-3">Nuovo Suggerimento Funzione</h3>
+                    <form id="newFunctionForm">
+                        <div class="mb-3">
+                            <label for="functionTitle" class="form-label">Titolo</label>
+                            <input type="text" class="form-control" id="functionTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="functionDescription" class="form-label">Descrizione</label>
+                            <textarea class="form-control" id="functionDescription" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Invia Suggerimento
+                        </button>
+                    </form>
+                </div>
+
+                <div id="functionSuggestions">
+                    {% for suggestion in function_suggestions %}
+                    <div class="suggestion-card">
+                        <div class="suggestion-header">
+                            <h5 class="mb-0">{{ suggestion.nome }}</h5>
+                            <span class="status-badge status-{{ suggestion.stato }}" id="status-badge-{{ suggestion.id }}">
+                                {{ suggestion.stato|capfirst }}
+                            </span>
+                        </div>
+                        <div class="suggestion-body">
+                            <p class="mb-0">{{ suggestion.descrizione }}</p>
+                        </div>
+                        <div class="suggestion-footer">
+                            <small class="text-muted">
+                                <i class="far fa-clock me-1"></i>
+                                {{ suggestion.data_creazione|date:"d/m/Y H:i" }}
+                            </small>
+                            <div>
+                                <select class="form-select form-select-sm status-select" data-type="function" data-id="{{ suggestion.id }}" style="width: auto; display: inline-block;">
+                                    <option value="non_visualizzato" {% if suggestion.stato == 'non_visualizzato' %}selected{% endif %}>Non visualizzato</option>
+                                    <option value="valutazione" {% if suggestion.stato == 'valutazione' %}selected{% endif %}>Valutazione</option>
+                                    <option value="respinto" {% if suggestion.stato == 'respinto' %}selected{% endif %}>Respinto</option>
+                                    <option value="lavorazione" {% if suggestion.stato == 'lavorazione' %}selected{% endif %}>Lavorazione</option>
+                                    <option value="attuato" {% if suggestion.stato == 'attuato' %}selected{% endif %}>Attuato</option>
+                                    <option value="non_valido" {% if suggestion.stato == 'non_valido' %}selected{% endif %}>Non valido</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-danger ms-2 delete-suggestion-btn" data-type="function" data-id="{{ suggestion.id }}" title="Elimina suggerimento"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Strumenti Tab -->
+            <div class="tab-pane fade" id="tools" role="tabpanel">
+                <div class="new-suggestion-form">
+                    <h3 class="mb-3">Nuovo Suggerimento Strumento</h3>
+                    <form id="newToolForm">
+                        <div class="mb-3">
+                            <label for="toolTitle" class="form-label">Titolo</label>
+                            <input type="text" class="form-control" id="toolTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="toolDescription" class="form-label">Descrizione</label>
+                            <textarea class="form-control" id="toolDescription" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Invia Suggerimento
+                        </button>
+                    </form>
+                </div>
+
+                <div id="toolSuggestions">
+                    {% for suggestion in tool_suggestions %}
+                    <div class="suggestion-card">
+                        <div class="suggestion-header">
+                            <h5 class="mb-0">{{ suggestion.nome }}</h5>
+                            <span class="status-badge status-{{ suggestion.stato }}" id="status-badge-{{ suggestion.id }}">
+                                {{ suggestion.stato|capfirst }}
+                            </span>
+                        </div>
+                        <div class="suggestion-body">
+                            <p class="mb-0">{{ suggestion.descrizione }}</p>
+                        </div>
+                        <div class="suggestion-footer">
+                            <small class="text-muted">
+                                <i class="far fa-clock me-1"></i>
+                                {{ suggestion.data_creazione|date:"d/m/Y H:i" }}
+                            </small>
+                            <div>
+                                <select class="form-select form-select-sm status-select" data-type="tool" data-id="{{ suggestion.id }}" style="width: auto; display: inline-block;">
+                                    <option value="non_visualizzato" {% if suggestion.stato == 'non_visualizzato' %}selected{% endif %}>Non visualizzato</option>
+                                    <option value="valutazione" {% if suggestion.stato == 'valutazione' %}selected{% endif %}>Valutazione</option>
+                                    <option value="respinto" {% if suggestion.stato == 'respinto' %}selected{% endif %}>Respinto</option>
+                                    <option value="lavorazione" {% if suggestion.stato == 'lavorazione' %}selected{% endif %}>Lavorazione</option>
+                                    <option value="attuato" {% if suggestion.stato == 'attuato' %}selected{% endif %}>Attuato</option>
+                                    <option value="non_valido" {% if suggestion.stato == 'non_valido' %}selected{% endif %}>Non valido</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-danger ms-2 delete-suggestion-btn" data-type="tool" data-id="{{ suggestion.id }}" title="Elimina suggerimento"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Stile Tab -->
+            <div class="tab-pane fade" id="style" role="tabpanel">
+                <div class="new-suggestion-form">
+                    <h3 class="mb-3">Nuovo Suggerimento Stile</h3>
+                    <form id="newStyleForm">
+                        <div class="mb-3">
+                            <label for="styleTitle" class="form-label">Titolo</label>
+                            <input type="text" class="form-control" id="styleTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="styleDescription" class="form-label">Descrizione</label>
+                            <textarea class="form-control" id="styleDescription" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Invia Suggerimento
+                        </button>
+                    </form>
+                </div>
+
+                <div id="styleSuggestions">
+                    {% for suggestion in style_suggestions %}
+                    <div class="suggestion-card">
+                        <div class="suggestion-header">
+                            <h5 class="mb-0">{{ suggestion.nome }}</h5>
+                            <span class="status-badge status-{{ suggestion.stato }}" id="status-badge-{{ suggestion.id }}">
+                                {{ suggestion.stato|capfirst }}
+                            </span>
+                        </div>
+                        <div class="suggestion-body">
+                            <p class="mb-0">{{ suggestion.descrizione }}</p>
+                        </div>
+                        <div class="suggestion-footer">
+                            <small class="text-muted">
+                                <i class="far fa-clock me-1"></i>
+                                {{ suggestion.data_creazione|date:"d/m/Y H:i" }}
+                            </small>
+                            <div>
+                                <select class="form-select form-select-sm status-select" data-type="style" data-id="{{ suggestion.id }}" style="width: auto; display: inline-block;">
+                                    <option value="non_visualizzato" {% if suggestion.stato == 'non_visualizzato' %}selected{% endif %}>Non visualizzato</option>
+                                    <option value="valutazione" {% if suggestion.stato == 'valutazione' %}selected{% endif %}>Valutazione</option>
+                                    <option value="respinto" {% if suggestion.stato == 'respinto' %}selected{% endif %}>Respinto</option>
+                                    <option value="lavorazione" {% if suggestion.stato == 'lavorazione' %}selected{% endif %}>Lavorazione</option>
+                                    <option value="attuato" {% if suggestion.stato == 'attuato' %}selected{% endif %}>Attuato</option>
+                                    <option value="non_valido" {% if suggestion.stato == 'non_valido' %}selected{% endif %}>Non valido</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-danger ms-2 delete-suggestion-btn" data-type="style" data-id="{{ suggestion.id }}" title="Elimina suggerimento"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Altri Tab -->
+            <div class="tab-pane fade" id="other" role="tabpanel">
+                <div class="new-suggestion-form">
+                    <h3 class="mb-3">Altro Suggerimento</h3>
+                    <form id="newOtherForm">
+                        <div class="mb-3">
+                            <label for="otherTitle" class="form-label">Titolo</label>
+                            <input type="text" class="form-control" id="otherTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="otherDescription" class="form-label">Descrizione</label>
+                            <textarea class="form-control" id="otherDescription" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Invia Suggerimento
+                        </button>
+                    </form>
+                </div>
+
+                <div id="otherSuggestions">
+                    {% for suggestion in other_suggestions %}
+                    <div class="suggestion-card">
+                        <div class="suggestion-header">
+                            <h5 class="mb-0">{{ suggestion.nome }}</h5>
+                            <span class="status-badge status-{{ suggestion.stato }}" id="status-badge-{{ suggestion.id }}">
+                                {{ suggestion.stato|capfirst }}
+                            </span>
+                        </div>
+                        <div class="suggestion-body">
+                            <p class="mb-0">{{ suggestion.descrizione }}</p>
+                        </div>
+                        <div class="suggestion-footer">
+                            <small class="text-muted">
+                                <i class="far fa-clock me-1"></i>
+                                {{ suggestion.data_creazione|date:"d/m/Y H:i" }}
+                            </small>
+                            <div>
+                                <select class="form-select form-select-sm status-select" data-type="other" data-id="{{ suggestion.id }}" style="width: auto; display: inline-block;">
+                                    <option value="non_visualizzato" {% if suggestion.stato == 'non_visualizzato' %}selected{% endif %}>Non visualizzato</option>
+                                    <option value="valutazione" {% if suggestion.stato == 'valutazione' %}selected{% endif %}>Valutazione</option>
+                                    <option value="respinto" {% if suggestion.stato == 'respinto' %}selected{% endif %}>Respinto</option>
+                                    <option value="lavorazione" {% if suggestion.stato == 'lavorazione' %}selected{% endif %}>Lavorazione</option>
+                                    <option value="attuato" {% if suggestion.stato == 'attuato' %}selected{% endif %}>Attuato</option>
+                                    <option value="non_valido" {% if suggestion.stato == 'non_valido' %}selected{% endif %}>Non valido</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-danger ms-2 delete-suggestion-btn" data-type="other" data-id="{{ suggestion.id }}" title="Elimina suggerimento"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gestione form nuove funzioni
+        document.getElementById('newFunctionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveSuggestion('function', this);
+        });
+
+        // Gestione form nuovi strumenti
+        document.getElementById('newToolForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveSuggestion('tool', this);
+        });
+
+        // Gestione form nuovo stile
+        document.getElementById('newStyleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveSuggestion('style', this);
+        });
+
+        // Gestione form altri suggerimenti
+        document.getElementById('newOtherForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveSuggestion('other', this);
+        });
+
+        // Gestione cambio stato suggerimento
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.status-select').forEach(function(select) {
+                select.addEventListener('change', function() {
+                    const type = this.getAttribute('data-type');
+                    const id = this.getAttribute('data-id');
+                    const stato = this.value;
+                    updateSuggestionStatus(type, id, stato);
+                });
+            });
+            document.querySelectorAll('.delete-suggestion-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    if (confirm('Sei sicuro di voler eliminare questo suggerimento?')) {
+                        const type = this.getAttribute('data-type');
+                        const id = this.getAttribute('data-id');
+                        deleteSuggestion(type, id, this);
+                    }
+                });
+            });
+        });
+
+        function updateSuggestionStatus(type, id, stato) {
+            fetch('{% url "suggerimenti" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `update_status=true&suggestion_type=${type}&suggestion_id=${id}&stato=${stato}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Aggiorna il badge senza ricaricare la pagina
+                    const badge = document.getElementById('status-badge-' + id);
+                    if (badge) {
+                        badge.className = 'status-badge status-' + stato;
+                        badge.textContent = stato.charAt(0).toUpperCase() + stato.slice(1).replace('_', ' ');
+                    }
+                } else {
+                    alert('Errore durante l\'aggiornamento dello stato del suggerimento');
+                }
+            });
+        }
+
+        function deleteSuggestion(type, id, btn) {
+            fetch('{% url "suggerimenti" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `delete_suggestion=true&suggestion_type=${type}&suggestion_id=${id}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Rimuovi la card dalla UI
+                    const card = btn.closest('.suggestion-card');
+                    if (card) card.remove();
+                } else {
+                    alert('Errore durante l\'eliminazione del suggerimento');
+                }
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function saveSuggestion(type, form) {
+            let title, description;
+            if (type === 'function') {
+                title = document.getElementById('functionTitle').value;
+                description = document.getElementById('functionDescription').value;
+            } else if (type === 'tool') {
+                title = document.getElementById('toolTitle').value;
+                description = document.getElementById('toolDescription').value;
+            } else if (type === 'style') {
+                title = document.getElementById('styleTitle').value;
+                description = document.getElementById('styleDescription').value;
+            } else {
+                title = document.getElementById('otherTitle').value;
+                description = document.getElementById('otherDescription').value;
+            }
+            fetch('{% url "suggerimenti" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `save_suggestion=true&suggestion_type=${type}&title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Errore durante il salvataggio del suggerimento: ' + (data.error || '')); 
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

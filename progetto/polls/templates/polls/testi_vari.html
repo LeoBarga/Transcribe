@@ -1,0 +1,520 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcribe - Testi Vari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .nav-link {
+            color: #0a2472;
+        }
+        .nav-link:hover {
+            color: #0a2472;
+            text-decoration: underline;
+        }
+        .section-title {
+            color: #0a2472;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .text-area {
+            min-height: 200px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .btn-primary {
+            background-color: #0a2472;
+            border-color: #0a2472;
+        }
+        .btn-primary:hover {
+            background-color: #081c5c;
+            border-color: #081c5c;
+        }
+        .btn-outline-primary {
+            color: #0a2472;
+            border-color: #0a2472;
+        }
+        .btn-outline-primary:hover {
+            background-color: #0a2472;
+            border-color: #0a2472;
+        }
+        .section-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .back-to-home {
+            margin-bottom: 2rem;
+        }
+        .nav-tabs .nav-link {
+            color: #0a2472;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0a2472;
+            font-weight: bold;
+            border-bottom: 2px solid #0a2472;
+        }
+        .text-item {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .text-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .text-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .text-item-title {
+            font-weight: 600;
+            color: #0a2472;
+        }
+        .text-item-date {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .text-item-content {
+            margin-bottom: 1rem;
+            max-height: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+        .text-item-content.expanded {
+            max-height: none;
+        }
+        .text-item-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .text-item-actions button {
+            margin-left: 0.5rem;
+        }
+        .expand-btn {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+            padding: 2rem 0 0.5rem;
+            cursor: pointer;
+        }
+        .expand-btn:hover {
+            color: #0a2472;
+        }
+    </style>
+</head>
+<body>
+    {% csrf_token %}
+    
+    <!-- Forms nascosti per le correzioni -->
+    <form id="transcriptionCorrectionForm" action="{% url 'correzioni' %}" method="POST" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="save_correction" value="true">
+        <input type="hidden" name="correction_type" id="transcriptionCorrectionType">
+        <input type="hidden" name="original_id" id="transcriptionOriginalId">
+    </form>
+
+    <form id="translationCorrectionForm" action="{% url 'correzioni' %}" method="POST" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="save_correction" value="true">
+        <input type="hidden" name="correction_type" id="translationCorrectionType">
+        <input type="hidden" name="original_id" id="translationOriginalId">
+    </form>
+
+    <form id="writtenCorrectionForm" action="{% url 'correzioni' %}" method="POST" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="save_correction" value="true">
+        <input type="hidden" name="correction_type" id="writtenCorrectionType">
+        <input type="hidden" name="original_id" id="writtenOriginalId">
+    </form>
+    
+    <!-- Overlay di caricamento -->
+    <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white;">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+            </div>
+            <h4 class="mt-3" id="loadingMessage">Creazione correzione in corso...</h4>
+            <div class="progress mt-3" style="width: 300px;">
+                <div id="loadingProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">Transcribe</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'info' %}">Info</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Back to Home Button -->
+        <div class="back-to-home">
+            <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Torna alla Home
+            </a>
+        </div>
+
+        <h1 class="text-center mb-4">Testi Vari</h1>
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="transcriptions-tab" data-bs-toggle="tab" data-bs-target="#transcriptions" type="button" role="tab" aria-controls="transcriptions" aria-selected="true">
+                    <i class="fas fa-microphone"></i> Trascrizioni
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="translations-tab" data-bs-toggle="tab" data-bs-target="#translations" type="button" role="tab" aria-controls="translations" aria-selected="false">
+                    <i class="fas fa-language"></i> Traduzioni
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="written-tab" data-bs-toggle="tab" data-bs-target="#written" type="button" role="tab" aria-controls="written" aria-selected="false">
+                    <i class="fas fa-pen"></i> Testi Scritti
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content" id="myTabContent">
+            <!-- Trascrizioni Tab -->
+            <div class="tab-pane fade show active" id="transcriptions" role="tabpanel" aria-labelledby="transcriptions-tab">
+                <div class="section-card">
+                    <h2 class="section-title">Le tue Trascrizioni</h2>
+                    
+                    <!-- Lista Trascrizioni -->
+                    <div id="transcriptionsList">
+                        {% for transcription in transcriptions %}
+                        <div class="text-item" data-id="{{ transcription.id }}" data-type="transcription">
+                            <div class="text-item-header">
+                                <div class="text-item-title">{{ transcription.trascrizione_audio.nome_audio }}</div>
+                                <div class="text-item-date">{{ transcription.time|date:"d/m/Y" }}</div>
+                            </div>
+                            <div class="text-item-content">
+                                <p>{{ transcription.audio_trascritto }}</p>
+                                <div class="expand-btn">Mostra di più</div>
+                            </div>
+                            <div class="text-item-actions">
+                                <form action="{% url 'correzioni' %}" method="POST" style="display: inline;" onsubmit="event.preventDefault(); correctText(this, 'transcription', '{{ transcription.id }}');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-check"></i> Correggi (Direct)
+                                    </button>
+                                </form>
+                                <button class="btn btn-sm btn-outline-primary" onclick="deleteText(this)">
+                                    <i class="fas fa-trash"></i> Elimina
+                                </button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Non ci sono trascrizioni disponibili.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traduzioni Tab -->
+            <div class="tab-pane fade" id="translations" role="tabpanel" aria-labelledby="translations-tab">
+                <div class="section-card">
+                    <h2 class="section-title">Le tue Traduzioni</h2>
+                    
+                    <!-- Lista Traduzioni -->
+                    <div id="translationsList">
+                        {% for translation in translations %}
+                        <div class="text-item" data-id="{{ translation.id }}" data-type="translation">
+                            <div class="text-item-header">
+                                <div class="text-item-title">{{ translation.traduzione_audio.nome_audio }}</div>
+                                <div class="text-item-date">{{ translation.time|date:"d/m/Y" }}</div>
+                            </div>
+                            <div class="text-item-content">
+                                <p>{{ translation.testo_tradotto }}</p>
+                                <div class="expand-btn">Mostra di più</div>
+                            </div>
+                            <div class="text-item-actions">
+                                <form action="{% url 'correzioni' %}" method="POST" style="display: inline;" onsubmit="event.preventDefault(); correctText(this, 'translation', '{{ translation.id }}');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-check"></i> Correggi (Direct)
+                                    </button>
+                                </form>
+                                <button class="btn btn-sm btn-outline-primary" onclick="deleteText(this)">
+                                    <i class="fas fa-trash"></i> Elimina
+                                </button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Non ci sono traduzioni disponibili.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testi Scritti Tab -->
+            <div class="tab-pane fade" id="written" role="tabpanel" aria-labelledby="written-tab">
+                <div class="section-card">
+                    <h2 class="section-title">I tuoi Testi Scritti</h2>
+                    
+                    <!-- Lista Testi Scritti -->
+                    <div id="writtenTextsList">
+                        {% for text in written_texts %}
+                        <div class="text-item" data-id="{{ text.id }}" data-type="written">
+                            <div class="text-item-header">
+                                <div class="text-item-title">{{ text.nome }}</div>
+                                <div class="text-item-date">{{ text.time|date:"d/m/Y" }}</div>
+                            </div>
+                            <div class="text-item-content">
+                                <p>{{ text.testo }}</p>
+                                <div class="expand-btn">Mostra di più</div>
+                            </div>
+                            <div class="text-item-actions">
+                                <form action="{% url 'correzioni' %}" method="POST" style="display: inline;" onsubmit="event.preventDefault(); correctText(this, 'written_text', '{{ text.id }}');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-check"></i> Correggi (Direct)
+                                    </button>
+                                </form>
+                                <button class="btn btn-sm btn-outline-primary" onclick="deleteText(this)">
+                                    <i class="fas fa-trash"></i> Elimina
+                                </button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Non ci sono testi scritti disponibili.
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Form per nuovo testo scritto -->
+                    <div class="mt-4">
+                        <h3>Scrivi un nuovo testo</h3>
+                        <div class="form-group">
+                            <label for="textTitle">Titolo</label>
+                            <input type="text" class="form-control" id="textTitle" placeholder="Inserisci il titolo del testo">
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="writtenText">Testo</label>
+                            <textarea class="form-control text-area" id="writtenText" placeholder="Scrivi il tuo testo qui..."></textarea>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button class="btn btn-primary" id="saveTextBtn">
+                                <i class="fas fa-save"></i> Salva Testo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <div class="social-links">
+                <a href="#" class="text-dark me-3"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-dark me-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-dark me-3"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-dark"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <p class="mt-3 mb-0">2025 Transcribe. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gestione espansione testo
+        document.querySelectorAll('.expand-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const content = this.parentElement;
+                content.classList.toggle('expanded');
+                this.textContent = content.classList.contains('expanded') ? 'Mostra meno' : 'Mostra di più';
+            });
+        });
+
+        // Funzione per eliminare un testo
+        function deleteText(button) {
+            const textItem = button.closest('.text-item');
+            const title = textItem.querySelector('.text-item-title').textContent;
+            const textId = textItem.dataset.id;
+            const textType = textItem.dataset.type;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            if (confirm(`Sei sicuro di voler eliminare il testo "${title}"?`)) {
+                // Invia la richiesta di eliminazione al server
+                fetch('', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: `delete_text=true&text_id=${textId}&text_type=${textType}`
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        textItem.remove();
+                    } else {
+                        alert('Errore durante l\'eliminazione del testo: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Errore durante l\'eliminazione del testo: ' + error);
+                });
+            }
+        }
+
+        // Funzione per correggere un testo
+        function correctText(form, textType, textId) {
+            let formElem;
+            if (textType === 'transcription') {
+                formElem = document.getElementById('transcriptionCorrectionForm');
+                document.getElementById('transcriptionCorrectionType').value = textType;
+                document.getElementById('transcriptionOriginalId').value = textId;
+            } else if (textType === 'translation') {
+                formElem = document.getElementById('translationCorrectionForm');
+                document.getElementById('translationCorrectionType').value = textType;
+                document.getElementById('translationOriginalId').value = textId;
+            } else if (textType === 'written_text') {
+                formElem = document.getElementById('writtenCorrectionForm');
+                document.getElementById('writtenCorrectionType').value = textType;
+                document.getElementById('writtenOriginalId').value = textId;
+            }
+            if (formElem) {
+                alert('Sto creando una correzione. Verrai reindirizzato alla pagina delle correzioni.');
+                formElem.submit();
+            } else {
+                alert('Errore: tipo di correzione non valido.');
+            }
+        }
+        
+        // Gestione salvataggio nuovo testo scritto
+        const saveTextBtn = document.getElementById('saveTextBtn');
+        saveTextBtn.addEventListener('click', () => {
+            const title = document.getElementById('textTitle').value;
+            const text = document.getElementById('writtenText').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            if (!title || !text) {
+                alert('Per favore inserisci sia il titolo che il testo');
+                return;
+            }
+            
+            // Invia i dati al server
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: `save_written_text=true&title=${encodeURIComponent(title)}&text=${encodeURIComponent(text)}`
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Aggiungi il nuovo testo alla lista
+                    const writtenTextsList = document.getElementById('writtenTextsList');
+                    const newTextItem = document.createElement('div');
+                    newTextItem.className = 'text-item';
+                    newTextItem.dataset.id = data.id;
+                    newTextItem.dataset.type = 'written';
+
+                    // Escape di caratteri speciali nel testo per evitare problemi con HTML/JS
+                    const escapedText = text.replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+
+                    newTextItem.innerHTML = `
+                        <div class="text-item-header">
+                            <div class="text-item-title">${title}</div>
+                            <div class="text-item-date">${new Date().toLocaleDateString()}</div>
+                        </div>
+                        <div class="text-item-content">
+                            <p>${escapedText}</p>
+                            <div class="expand-btn">Mostra di più</div>
+                        </div>
+                        <div class="text-item-actions">
+                            <button class="btn btn-sm btn-outline-primary" onclick="correctText(this, 'written_text', '${data.id}')">
+                                <i class="fas fa-check"></i> Correggi
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="deleteText(this)">
+                                <i class="fas fa-trash"></i> Elimina
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Se c'è un messaggio "non ci sono testi disponibili", rimuovilo
+                    const noTextsMessage = writtenTextsList.querySelector('.alert');
+                    if (noTextsMessage) {
+                        noTextsMessage.remove();
+                    }
+                    
+                    writtenTextsList.prepend(newTextItem);
+                    
+                    // Aggiungi l'event listener per l'espansione del testo
+                    newTextItem.querySelector('.expand-btn').addEventListener('click', function() {
+                        const content = this.parentElement;
+                        content.classList.toggle('expanded');
+                        this.textContent = content.classList.contains('expanded') ? 'Mostra meno' : 'Mostra di più';
+                    });
+                    
+                    // Pulisci i campi
+                    document.getElementById('textTitle').value = '';
+                    document.getElementById('writtenText').value = '';
+                    
+                    // Passa alla tab dei testi scritti
+                    document.getElementById('written-tab').click();
+                } else {
+                    alert('Errore durante il salvataggio del testo: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Errore durante il salvataggio del testo: ' + error);
+            });
+        });
+    </script>
+</body>
+</html> 

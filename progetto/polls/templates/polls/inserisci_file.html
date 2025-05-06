@@ -1,0 +1,472 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcribe - Inserisci File</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .nav-link {
+            color: #0a2472;
+        }
+        .nav-link:hover {
+            color: #0a2472;
+            text-decoration: underline;
+        }
+        .section-title {
+            color: #0a2472;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .upload-area {
+            border: 2px dashed #0a2472;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            background-color: #f8f9fa;
+        }
+        .upload-area i {
+            font-size: 3rem;
+            color: #0a2472;
+            margin-bottom: 1rem;
+        }
+        .text-area {
+            min-height: 200px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .btn-primary {
+            background-color: #0a2472;
+            border-color: #0a2472;
+        }
+        .btn-primary:hover {
+            background-color: #081c5c;
+            border-color: #081c5c;
+        }
+        .btn-outline-primary {
+            color: #0a2472;
+            border-color: #0a2472;
+        }
+        .btn-outline-primary:hover {
+            background-color: #0a2472;
+            border-color: #0a2472;
+        }
+        .section-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .back-to-home {
+            margin-bottom: 2rem;
+        }
+        .nav-tabs .nav-link {
+            color: #0a2472;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0a2472;
+            font-weight: bold;
+            border-bottom: 2px solid #0a2472;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">Transcribe</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'info' %}">Info</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Back to Home Button -->
+        <div class="back-to-home">
+            <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Torna alla Home
+            </a>
+        </div>
+
+        <h1 class="text-center mb-4">Inserisci File</h1>
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="transcription-tab" data-bs-toggle="tab" data-bs-target="#transcription" type="button" role="tab" aria-controls="transcription" aria-selected="true">
+                    <i class="fas fa-microphone"></i> Trascrizione
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="translation-tab" data-bs-toggle="tab" data-bs-target="#translation" type="button" role="tab" aria-controls="translation" aria-selected="false">
+                    <i class="fas fa-language"></i> Traduzione
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content" id="myTabContent">
+            <!-- Trascrizione Tab -->
+            <div class="tab-pane fade show active" id="transcription" role="tabpanel" aria-labelledby="transcription-tab">
+                <div class="section-card">
+                    <h2 class="section-title">Trascrizione Audio</h2>
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-microphone"></i>
+                        <h4>Trascrivi il tuo audio</h4>
+                        <p>Trascina qui il tuo file audio o clicca per selezionarlo</p>
+                        <input type="file" id="audioFile" accept="audio/*" style="display: none;">
+                        <small class="text-muted">Supporto file MP3 (max 30MB)</small>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="language">Lingua</label>
+                                <select class="form-control" id="language">
+                                    <option value="it">Italiano</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="transcriptionMode">Modalità</label>
+                                <select class="form-control" id="transcriptionMode">
+                                    <option value="tiny">Veloce</option>
+                                    <option value="base">Precisa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" id="transcribeBtn">
+                            <i class="fas fa-microphone"></i> Trascrivi
+                        </button>
+                    </div>
+                    <div id="transcriptionResult" class="mt-4" style="display: none;">
+                        <h4>Risultato Trascrizione</h4>
+                        <div class="text-area" id="transcriptionText"></div>
+                        <div class="text-center">
+                            <button class="btn btn-outline-primary me-2" id="copyTranscription">
+                                <i class="fas fa-copy"></i> Copia
+                            </button>
+                            <button class="btn btn-outline-primary me-2" id="downloadTranscription">
+                                <i class="fas fa-download"></i> Scarica
+                            </button>
+                            <a href="{% url 'testi_vari' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-save"></i> Salva nei Testi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traduzione Tab -->
+            <div class="tab-pane fade" id="translation" role="tabpanel" aria-labelledby="translation-tab">
+                <div class="section-card">
+                    <h2 class="section-title">Traduzione Audio</h2>
+                    <div class="upload-area" id="translationUploadArea">
+                        <i class="fas fa-language"></i>
+                        <h4>Traduci il tuo audio</h4>
+                        <p>Trascina qui il tuo file audio o clicca per selezionarlo</p>
+                        <input type="file" id="translationAudioFile" accept="audio/*" style="display: none;">
+                        <small class="text-muted">Supporto file MP3 (max 30MB)</small>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="sourceLanguage">Lingua Sorgente</label>
+                                <select class="form-control" id="sourceLanguage">
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="targetLanguage">Lingua Target</label>
+                                <select class="form-control" id="targetLanguage">
+                                    <option value="it">Italiano</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" id="translateBtn">
+                            <i class="fas fa-language"></i> Traduci
+                        </button>
+                    </div>
+                    <div id="translationResult" class="mt-4" style="display: none;">
+                        <h4>Risultato Traduzione</h4>
+                        <div class="text-area" id="translationText"></div>
+                        <div class="text-center">
+                            <button class="btn btn-outline-primary me-2" id="copyTranslation">
+                                <i class="fas fa-copy"></i> Copia
+                            </button>
+                            <button class="btn btn-outline-primary me-2" id="downloadTranslation">
+                                <i class="fas fa-download"></i> Scarica
+                            </button>
+                            <a href="{% url 'testi_vari' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-save"></i> Salva nei Testi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <div class="social-links">
+                <a href="#" class="text-dark me-3"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-dark me-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-dark me-3"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-dark"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <p class="mt-3 mb-0">2025 Transcribe. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gestione upload file audio per trascrizione
+        const uploadArea = document.getElementById('uploadArea');
+        const audioFile = document.getElementById('audioFile');
+        const transcribeBtn = document.getElementById('transcribeBtn');
+        const transcriptionResult = document.getElementById('transcriptionResult');
+        const transcriptionText = document.getElementById('transcriptionText');
+        const copyTranscription = document.getElementById('copyTranscription');
+        const downloadTranscription = document.getElementById('downloadTranscription');
+
+        uploadArea.addEventListener('click', () => audioFile.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#f8f9fa';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('audio/')) {
+                audioFile.files = e.dataTransfer.files;
+                updateFileInfo(uploadArea, file);
+            }
+        });
+
+        // Aggiungi gestione dell'evento change per l'input file
+        audioFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                updateFileInfo(uploadArea, file);
+            }
+        });
+
+        // Gestione upload file audio per traduzione
+        const translationUploadArea = document.getElementById('translationUploadArea');
+        const translationAudioFile = document.getElementById('translationAudioFile');
+        const translateBtn = document.getElementById('translateBtn');
+        const translationResult = document.getElementById('translationResult');
+        const translationText = document.getElementById('translationText');
+        const copyTranslation = document.getElementById('copyTranslation');
+        const downloadTranslation = document.getElementById('downloadTranslation');
+
+        translationUploadArea.addEventListener('click', () => translationAudioFile.click());
+        translationUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            translationUploadArea.style.backgroundColor = '#f8f9fa';
+        });
+        translationUploadArea.addEventListener('dragleave', () => {
+            translationUploadArea.style.backgroundColor = '';
+        });
+        translationUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            translationUploadArea.style.backgroundColor = '';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('audio/')) {
+                translationAudioFile.files = e.dataTransfer.files;
+                updateFileInfo(translationUploadArea, file);
+            }
+        });
+
+        // Aggiungi gestione dell'evento change per l'input file di traduzione
+        translationAudioFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                updateFileInfo(translationUploadArea, file);
+            }
+        });
+
+        // Funzione per aggiornare le informazioni del file selezionato
+        function updateFileInfo(area, file) {
+            // Rimuovi eventuali messaggi precedenti
+            const existingInfo = area.querySelector('.file-info');
+            if (existingInfo) {
+                existingInfo.remove();
+            }
+
+            // Crea un elemento per mostrare le informazioni del file
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'file-info mt-2';
+            fileInfo.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> File selezionato: <strong>${file.name}</strong>
+                    <br>
+                    <small>Dimensione: ${formatFileSize(file.size)}</small>
+                </div>
+            `;
+            area.appendChild(fileInfo);
+        }
+
+        // Funzione per formattare la dimensione del file
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Funzioni di trascrizione e traduzione
+        transcribeBtn.addEventListener('click', () => {
+            // Verifica se è stato selezionato un file
+            if (!audioFile.files || audioFile.files.length === 0) {
+                alert('Seleziona un file audio prima di procedere con la trascrizione.');
+                return;
+            }
+
+            // Mostra un indicatore di caricamento
+            transcriptionResult.style.display = 'block';
+            transcriptionText.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Trascrizione in corso...</p></div>';
+
+            // Crea un oggetto FormData per inviare il file
+            const formData = new FormData();
+            formData.append('audio_file', audioFile.files[0]);
+            formData.append('language', document.getElementById('language').value);
+            formData.append('mode', document.getElementById('transcriptionMode').value);
+            formData.append('transcription', 'true');
+
+            // Invia la richiesta al server
+            fetch('{% url "inserisci_file" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    transcriptionText.textContent = data.transcription;
+                } else {
+                    transcriptionText.innerHTML = `<div class="alert alert-danger">Errore: ${data.error}</div>`;
+                }
+            })
+            .catch(error => {
+                transcriptionText.innerHTML = `<div class="alert alert-danger">Errore durante la trascrizione: ${error.message}</div>`;
+            });
+        });
+
+        translateBtn.addEventListener('click', () => {
+            // Verifica se è stato selezionato un file
+            if (!translationAudioFile.files || translationAudioFile.files.length === 0) {
+                alert('Seleziona un file audio prima di procedere con la traduzione.');
+                return;
+            }
+
+            // Mostra un indicatore di caricamento
+            translationResult.style.display = 'block';
+            translationText.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Traduzione in corso...</p></div>';
+
+            // Crea un oggetto FormData per inviare il file
+            const formData = new FormData();
+            formData.append('audio_file', translationAudioFile.files[0]);
+            formData.append('source_language', document.getElementById('sourceLanguage').value);
+            formData.append('target_language', document.getElementById('targetLanguage').value);
+            formData.append('translation', 'true');
+
+            // Invia la richiesta al server
+            fetch('{% url "inserisci_file" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    translationText.textContent = data.translation;
+                } else {
+                    translationText.innerHTML = `<div class="alert alert-danger">Errore: ${data.error}</div>`;
+                }
+            })
+            .catch(error => {
+                translationText.innerHTML = `<div class="alert alert-danger">Errore durante la traduzione: ${error.message}</div>`;
+            });
+        });
+
+        // Funzioni di copia e download
+        copyTranscription.addEventListener('click', () => {
+            navigator.clipboard.writeText(transcriptionText.textContent);
+        });
+
+        downloadTranscription.addEventListener('click', () => {
+            const blob = new Blob([transcriptionText.textContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'trascrizione.txt';
+            a.click();
+        });
+
+        copyTranslation.addEventListener('click', () => {
+            navigator.clipboard.writeText(translationText.textContent);
+        });
+
+        downloadTranslation.addEventListener('click', () => {
+            const blob = new Blob([translationText.textContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'traduzione.txt';
+            a.click();
+        });
+
+        // Funzione per ottenere il valore del cookie CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html> 

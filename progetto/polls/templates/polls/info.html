@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Transcribe - Informazioni</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link href="{% static 'polls/css/style.css' %}" rel="stylesheet">
+    <style>
+        .info-header {
+            text-align: center;
+            padding: 3rem 0;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .info-icon {
+            font-size: 4rem;
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+        .info-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #0a2472;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .info-subtitle {
+            font-size: 1.5rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+        .tech-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            margin-bottom: 1.5rem;
+        }
+        .tech-card:hover {
+            transform: translateY(-5px);
+        }
+        .tech-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .feature-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .feature-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .feature-list li:before {
+            content: "✓";
+            color: #28a745;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-microphone-alt me-2"></i>Transcribe
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}"><i class="fas fa-home me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'info' %}"><i class="fas fa-info-circle me-1"></i>Info</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="info-header">
+            <i class="fas fa-microphone-alt info-icon"></i>
+            <h1 class="info-title">Transcribe</h1>
+            <p class="info-subtitle">Trascrizione Audio Intelligente</p>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title mb-4">Chi Siamo</h2>
+                        <p class="card-text">
+                            Transcribe è un'applicazione web innovativa progettata per trasformare facilmente file audio in testo scritto. 
+                            La nostra missione è rendere accessibile a tutti la potenza della trascrizione automatica, 
+                            supportando sia l'italiano che l'inglese con funzionalità di traduzione integrate.
+                        </p>
+                        <p class="card-text">
+                            Che tu sia uno studente che vuole prendere appunti dalle lezioni, un professionista che ha bisogno 
+                            di trascrivere riunioni o conferenze, o semplicemente qualcuno che vuole convertire i propri 
+                            file audio in testo, Transcribe è lo strumento che fa per te.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <h2 class="mb-4">Funzionalità Principali</h2>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <ul class="feature-list">
+                            <li>Trascrizione di file audio in formato MP3 con alta precisione</li>
+                            <li>Traduzione automatica da inglese a italiano</li>
+                            <li>Correzione automatica del testo trascritto</li>
+                            <li>Interfaccia intuitiva per la correzione manuale</li>
+                            <li>Esportazione delle trascrizioni in formato testo</li>
+                            <li>Archiviazione delle trascrizioni per accesso futuro</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <h2 class="mb-4">Tecnologie Utilizzate</h2>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card tech-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-brain tech-icon text-primary"></i>
+                        <h3 class="card-title">WhisperAI</h3>
+                        <p class="card-text">
+                            Utilizziamo l'avanzato modello di intelligenza artificiale Whisper per la trascrizione audio, 
+                            garantendo risultati di alta qualità e precisione.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card tech-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-language tech-icon text-success"></i>
+                        <h3 class="card-title">Google Translator</h3>
+                        <p class="card-text">
+                            Integriamo Google Translator per offrire traduzioni accurate da inglese a italiano, 
+                            rendendo accessibili contenuti in lingua straniera.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card tech-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-robot tech-icon text-warning"></i>
+                        <h3 class="card-title">Modelli di Correzione IA</h3>
+                        <p class="card-text">
+                            Implementiamo algoritmi di intelligenza artificiale per la correzione automatica 
+                            del testo trascritto, migliorando ulteriormente la qualità dei risultati.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title mb-4">Come Utilizzare Transcribe</h2>
+                        <ol class="card-text">
+                            <li>Carica un file audio in formato MP3 (massimo 30MB)</li>
+                            <li>Seleziona la lingua dell'audio (italiano o inglese)</li>
+                            <li>Scegli le opzioni di trascrizione (traduzione, correzione automatica)</li>
+                            <li>Clicca su "Trascrivi" e attendi il completamento dell'elaborazione</li>
+                            <li>Visualizza, copia o scarica il testo trascritto</li>
+                            <li>Utilizza gli strumenti di correzione per perfezionare il risultato</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-microphone-alt me-2"></i>Transcribe</h5>
+                    <p>Trasforma i tuoi audio in testo in modo intelligente!</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="social-links">
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html> 

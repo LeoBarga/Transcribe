@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Transcribe - Trascrizione Audio Intelligente</title>
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<!-- Custom CSS -->
+	<link href="{% static 'polls/css/style.css' %}" rel="stylesheet">
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container">
+			<a class="navbar-brand" href="#">
+				<i class="fas fa-microphone-alt me-2"></i>Transcribe
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link active" href="#"><i class="fas fa-home me-1"></i>Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'info' %}"><i class="fas fa-info-circle me-1"></i>Info</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container-fluid py-5">
+		<div class="row">
+			<div class="col-md-12">
+				<div id="carousel-375669" class="carousel slide" data-bs-ride="carousel">
+					<div class="carousel-indicators">
+						<button type="button" data-bs-target="#carousel-375669" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+						<button type="button" data-bs-target="#carousel-375669" data-bs-slide-to="1" aria-label="Slide 2"></button>
+						<button type="button" data-bs-target="#carousel-375669" data-bs-slide-to="2" aria-label="Slide 3"></button>
+					</div>
+					<div class="carousel-inner">
+						<div class="carousel-item active">
+							<img class="d-block w-100" alt="Trascrizione Audio" src="{% static 'polls/img/slide1.jpg' %}" />
+							<div class="carousel-caption">
+								<h4><i class="fas fa-microphone-alt me-2"></i>Trasforma tutti i tuoi audio in testo!</h4>
+								<p>Con il supporto di WhisperAI e Google Translator</p>
+							</div>
+						</div>
+						<div class="carousel-item">
+							<img class="d-block w-100" alt="Traduzione Multilingua" src="{% static 'polls/img/slide2.jpg' %}" />
+							<div class="carousel-caption">
+								<h4><i class="fas fa-language me-2"></i>Supporto per audio in Italiano e Inglese con funzionalità di traduzione!</h4>
+								<p>Funzionalità di correzione manuale o integrata tramite IA</p>
+							</div>
+						</div>
+						<div class="carousel-item">
+							<img class="d-block w-100" alt="Appunti Automatici" src="{% static 'polls/img/slide3.jpg' %}" />
+							<div class="carousel-caption">
+								<h4><i class="fas fa-clock me-2"></i>Risparmia tempo nelle tue lezioni, meeting e conferenze!</h4>
+								<p>Tutto gli appunti di cui hai bisogno, facilmente</p>
+							</div>
+						</div>
+					</div>
+					<button class="carousel-control-prev" type="button" data-bs-target="#carousel-375669" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Previous</span>
+					</button>
+					<button class="carousel-control-next" type="button" data-bs-target="#carousel-375669" data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Next</span>
+					</button>
+				</div>
+
+				<!-- Alternating feature boxes -->
+				<div class="container mt-5">
+					<!-- Feature 1: Image Left, Text Right -->
+					<div class="row align-items-center mb-5 feature-row">
+						<div class="col-md-5">
+							<div class="feature-image-left">
+								<img src="{% static 'polls/img/feature1.jpg' %}" alt="Trascrizione Avanzata" class="img-fluid rounded shadow">
+							</div>
+						</div>
+						<div class="col-md-7">
+							<div class="feature-content-right">
+								<h3><i class="fas fa-microphone-alt me-2"></i>Trascrizione Avanzata</h3>
+								<p>La nostra applicazione utilizza l'intelligenza artificiale di Whisper per convertire con precisione qualsiasi audio in testo. Supporta file in formato MP3 con un alta precisione, ideale per studenti, professionisti e ricercatori.</p>
+							</div>
+						</div>
+					</div>
+
+					<!-- Feature 2: Text Left, Image Right -->
+					<div class="row align-items-center mb-5 feature-row">
+						<div class="col-md-7">
+							<div class="feature-content-left">
+								<h3><i class="fas fa-language me-2"></i>Traduzione Multilingua</h3>
+								<p>Oltre alla trascrizione, la nostra app offre traduzioni istantanee da Inglese a Italiano grazie all'integrazione con Google Translator. Puoi ascoltare un audio in inglese e ottenere la trascrizione in inglese o in italiano comodamente. La correzione manuale o assistita dall'IA garantisce inoltre risultati ancora migliori, rimuovendo gli sporadici errori durante trascrizioni e traduzioni.</p>
+							</div>
+						</div>
+						<div class="col-md-5">
+							<div class="feature-image-right">
+								<img src="{% static 'polls/img/feature2.jpg' %}" alt="Traduzione Multilingua" class="img-fluid rounded shadow">
+							</div>
+						</div>
+					</div>
+
+					<!-- Feature 3: Image Left, Text Right -->
+					<div class="row align-items-center mb-5 feature-row">
+						<div class="col-md-5">
+							<div class="feature-image-left">
+								<img src="{% static 'polls/img/feature3.jpg' %}" alt="Gestione Appunti" class="img-fluid rounded shadow">
+							</div>
+						</div>
+						<div class="col-md-7">
+							<div class="feature-content-right">
+								<h3><i class="fas fa-file-alt me-2"></i>Gestione Appunti</h3>
+								<p>Organizza e gestisci facilmente tutte le tue trascrizioni con il nostro sistema di archiviazione comodo e intuitivo. Tutto ciò di cui hai bisogno a portata di mano!</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="jumbotron text-center">
+					<h2><i class="fas fa-rocket me-2"></i>Trascrivi ogni tuo audio con Transcribe!</h2>
+					<p class="lead">Inizia ora!</p>
+					<div class="d-flex justify-content-center gap-3">
+						<a class="btn btn-primary btn-lg" href="{% url 'home' %}">
+							<i class="fas fa-sign-in-alt me-2"></i>Inizia
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer class="bg-dark text-light py-4 mt-5">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<h5><i class="fas fa-microphone-alt me-2"></i>Transcribe</h5>
+					<p>Trasforma i tuoi audio in testo in modo intelligente!</p>
+				</div>
+				<div class="col-md-6 text-md-end">
+					<div class="social-links">
+						<a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+						<a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+						<a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+						<a href="#" class="text-light"><i class="fab fa-linkedin-in"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+	<!-- Custom JavaScript -->
+	<script src="{% static 'polls/js/main.js' %}"></script>
+</body>
+</html>
