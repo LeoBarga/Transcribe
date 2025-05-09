@@ -1,0 +1,4 @@
+django
+whisper
+language-tool-python
+deep-translator 

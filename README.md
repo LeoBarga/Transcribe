@@ -12,7 +12,7 @@ Una web application Django per la trascrizione, traduzione e correzione automati
 
 ## Requisiti Tecnici
 
-- Python 3.x
+- Python 3.10+
 - Django
 - OpenAI Whisper
 - Language Tool Python
@@ -53,6 +53,28 @@ Una web application Django per la trascrizione, traduzione e correzione automati
 - La generazione di correzioni su un nuovo testo scritto richiede due passaggi
 - Attualmente vengono utilizzati strumenti gratuiti con capacità minori rispetto a quelli comunemente utilizzati
 
+## Installazione
+
+Per installare le dipendenze necessarie al funzionamento dell'applicazione, assicurati di avere Python 3.10+ e pip installati. Puoi installare le dipendenze principali con il seguente comando:
+
+```bash
+pip install django whisper language-tool-python deep-translator
+```
+
+### Dipendenze principali (come elencate nel requirements.txt del progetto)
+- Django
+- whisper (e openai-whisper)
+- language-tool-python
+- deep-translator
+
+Per creare un ambiente virtuale:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Su Windows: .venv\Scripts\activate
+pip install django whisper language-tool-python deep-translator
+```
+
 ## Note
 
-Questo progetto utilizza diversi strumenti di IA per l'elaborazione del linguaggio naturale, incluso OpenAI Whisper per la trascrizione audio e Language Tool per la correzione del testo. 
+Questo progetto utilizza diversi strumenti di IA gratuita per l'elaborazione del linguaggio naturale, incluso OpenAI Whisper per la trascrizione audio e Language Tool per la correzione del testo. La potenza di questi strumenti gratuiti e quindi molto poca rispetto a quelli a pagamento dispnibili sul mercato ma è sufficiente per dimostrare le potenzialità dell'applicazione.
