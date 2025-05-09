@@ -90,7 +90,7 @@ verrà poi richiesto di inserire la password e di riinserirla per conferma
 
 ```bash
 Password: **********
-Password (di nuovo): *********
+Password (again): *********
 Superuser created successfully.
 ```
 
