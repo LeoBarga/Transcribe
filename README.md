@@ -77,6 +77,7 @@ pip install django whisper language-tool-python deep-translator
 
 
 È già presente un superuser con credenziali admin:"admin" password:"password"
+
 Per creare un nuovo superuser:
 
 ```bash
