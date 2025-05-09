@@ -75,6 +75,24 @@ source .venv/bin/activate  # Su Windows: .venv\Scripts\activate
 pip install django whisper language-tool-python deep-translator
 ```
 
+
+È già presente un superuser con credenziali admin:"admin" password:"password"
+Per creare un nuovo superuser:
+
+```bash
+python manage.py createsuperuser
+Username: nome_admin
+Email address: admin@esempio.com
+```
+
+verrà poi richiesto di inserire la password e di riinserirla per conferma
+
+```bash
+Password: **********
+Password (di nuovo): *********
+Superuser created successfully.
+```
+
 ## Note
 
 Questo progetto utilizza diversi strumenti di IA gratuita per l'elaborazione del linguaggio naturale, incluso OpenAI Whisper per la trascrizione audio e Language Tool per la correzione del testo. La potenza di questi strumenti gratuiti e quindi molto poca rispetto a quelli a pagamento dispnibili sul mercato ma è sufficiente per dimostrare le potenzialità dell'applicazione.
